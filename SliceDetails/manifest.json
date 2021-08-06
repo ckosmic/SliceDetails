@@ -1,0 +1,17 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
+  "id": "SliceDetails",
+  "name": "SliceDetails",
+  "author": "ckosmic",
+  "version": "1.0.0",
+  "description": "View your average cuts per-angle per-grid position in the pause menu and completion screen.",
+  "gameVersion": "1.16.4",
+  "dependsOn": {
+    "BSIPA": "^4.2.0",
+    "BeatSaberMarkupLanguage": "^1.5.4",
+    "SiraUtil": "^2.5.7"
+  },
+  "links": {
+    "project-source": "https://github.com/ckosmic/SliceDetails"
+  }
+}

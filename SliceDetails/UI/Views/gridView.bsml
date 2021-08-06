@@ -1,0 +1,29 @@
+﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+	<vertical child-control-height='true'>
+		<horizontal bg='round-rect-panel' pad='5' horizontal-fit='PreferredSize'>
+			<vertical id='tile-grid'>
+				<horizontal id='tile-row'>
+				</horizontal>
+			</vertical>
+			<clickable-image id='tile' src='SliceDetails.Resources.bloq.png' default-color='#777777' highlight-color='#eeeeee' preferred-width='10' preferred-height='10' click-event='presentNotesModal'>
+				<!--<image id='tile-dot' src='SliceDetails.Resources.dot.png' size-delta-x='10' size-delta-y='10'></image>-->
+				<text text='' font-size='3' face-color='#ffffff' font-align='Center'></text>
+			</clickable-image>
+		</horizontal>
+		<modal id='note-modal' show-event='presentNotesModal' click-off-closes='true' move-to-center='true'>
+			<horizontal id='note-horizontal' bg='round-rect-panel' horizontal-fit='PreferredSize'>
+				<vertical id='note-grid' pad='5' vertical-fit='PreferredSize'>
+					
+				</vertical>
+				<horizontal id='note-row'>
+						
+				</horizontal>
+				<image id='note' src='SliceDetails.Resources.bloq.png' preferred-width='16' preferred-height='16' pad='1' img-color='#777777'>
+					<image id='note-dir-arrow' src='SliceDetails.Resources.arrow.png' size-delta-x='16' size-delta-y='16'></image>
+					<image id='note-cut-arrow' src='SliceDetails.Resources.cut_arrow.png' size-delta-x='16' size-delta-y='16'></image>
+					<image id='note-cut-distance' size-delta-x='16' size-delta-y='16' pivot-x='1.0'></image>
+				</image>
+			</horizontal>
+		</modal>
+	</vertical>
+</bg>
