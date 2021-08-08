@@ -12,7 +12,7 @@ namespace SliceDetails.HarmonyPatches
 	class SoloFreePlayFlowCoordinatorPatch
 	{
 		static void Postfix(ref SoloFreePlayFlowCoordinator __instance, LevelCompletionResults levelCompletionResults) {
-			if (levelCompletionResults.levelEndAction == LevelCompletionResults.LevelEndAction.None) {
+			if (levelCompletionResults.levelEndAction == LevelCompletionResults.LevelEndAction.None && Plugin.Settings.ShowInCompletionScreen) {
 				UICreator.instance.Create(Plugin.Settings.ResultsUIPosition, Quaternion.Euler(Plugin.Settings.ResultsUIRotation));
 			}
 		}

@@ -19,10 +19,11 @@ namespace SliceDetails
 
 		public void Initialize() {
 			instance = this;
-			Plugin.Log.Info("Pausecontrolelr intiitaslsz");
-			_gridViewController = UICreator.instance.Create(Plugin.Settings.PauseUIPosition, Quaternion.Euler(Plugin.Settings.PauseUIRotation));
-			_gridViewController.transform.parent.gameObject.SetActive(false);
-			UICreator.instance.CreateHoverHintControllerInstance();
+			if (Plugin.Settings.ShowInPauseMenu) {
+				_gridViewController = UICreator.instance.Create(Plugin.Settings.PauseUIPosition, Quaternion.Euler(Plugin.Settings.PauseUIRotation));
+				_gridViewController.transform.parent.gameObject.SetActive(false);
+				UICreator.instance.CreateHoverHintControllerInstance();
+			}
 		}
 
 		public void PauseMenuOpened(PauseMenuManager pauseMenuManager) {

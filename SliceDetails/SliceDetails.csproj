@@ -133,6 +133,7 @@
   <ItemGroup>
     <Compile Include="Data\Score.cs" />
     <Compile Include="UI\SelectedTileIndicator.cs" />
+    <Compile Include="UI\SettingsViewController.cs" />
     <Compile Include="Utils\ColorSchemeManager.cs" />
     <Compile Include="HarmonyPatches\MenuTransitionsHelperPatch.cs" />
     <Compile Include="HarmonyPatches\PauseMenuManagerPatches.cs" />
@@ -163,6 +164,7 @@
     <EmbeddedResource Include="UI\GridViewController.bsml">
       <DependentUpon>GridViewController.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Views\settingsView.bsml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks">

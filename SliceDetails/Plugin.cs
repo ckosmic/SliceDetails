@@ -12,6 +12,7 @@ using SiraUtil.Zenject;
 using SliceDetails.Installers;
 using HarmonyLib;
 using SliceDetails.Settings;
+using BeatSaberMarkupLanguage.Settings;
 
 namespace SliceDetails
 {
@@ -26,17 +27,12 @@ namespace SliceDetails
 		private Harmony _harmony;
 
 		[Init]
-		/// <summary>
-		/// Called when the plugin is first loaded by IPA (either when the game starts or when the plugin is enabled if it starts disabled).
-		/// [Init] methods that use a Constructor or called before regular methods like InitWithConfig.
-		/// Only use [Init] with one Constructor.
-		/// </summary>
 		public void Init(IPALogger logger, Config config, Zenjector zenject) {
 			Instance = this;
 			Log = logger;
 			Settings = config.Generated<SettingsStore>();
+			BSMLSettings.instance.AddSettingsMenu("SliceDetails", $"SliceDetails.UI.Views.settingsView.bsml", SettingsViewController.instance);
 			zenject.OnGame<SDGameInstaller>(false).OnlyForStandard();
-			Log.Info("SliceDetails initialized.");
 		}
 
 		[OnStart]
@@ -49,12 +45,6 @@ namespace SliceDetails
 
 			new GameObject("SDSliceProcessor").AddComponent<SliceProcessor>();
 			new GameObject("SDCompletionUICreator").AddComponent<UICreator>();
-		}
-
-		[OnExit]
-		public void OnApplicationQuit() {
-			Log.Debug("OnApplicationQuit");
-
 		}
 	}
 }

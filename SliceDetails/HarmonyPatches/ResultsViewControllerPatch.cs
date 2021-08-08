@@ -11,7 +11,8 @@ namespace SliceDetails.HarmonyPatches
 	class ResultsViewControllerPatch
 	{
 		static void Postfix(ref ResultsViewController __instance) {
-			UICreator.instance.Remove();
+			if(Plugin.Settings.ShowInCompletionScreen)
+				UICreator.instance.Remove();
 		}
 	}
 }

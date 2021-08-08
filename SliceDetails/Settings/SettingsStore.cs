@@ -16,6 +16,8 @@ namespace SliceDetails.Settings
 		public Vector3 ResultsUIRotation = new Vector3(340.0f, 292.0f, 0.0f);
 		public Vector3 PauseUIPosition = new Vector3(-3.0f, 1.5f, 0.0f);
 		public Vector3 PauseUIRotation = new Vector3(0.0f, 270.0f, 0.0f);
+		public bool ShowInPauseMenu = true;
+		public bool ShowInCompletionScreen = true;
 		public bool ShowHandle = false;
 		public bool TrueCutOffsets = true;
 	}

@@ -22,7 +22,6 @@ namespace SliceDetails
 
 		public static Sprite spr_arrow = ResourceUtilities.LoadSpriteFromResource("SliceDetails.Resources.arrow.png");
 		public static Sprite spr_dot = ResourceUtilities.LoadSpriteFromResource("SliceDetails.Resources.dot.png");
-		public static Sprite spr_grabber = ResourceUtilities.LoadSpriteFromResource("SliceDetails.Resources.grabber.png");
 		public static Sprite spr_RoundRect10;
 
 		public HoverHintController hoverHintController;

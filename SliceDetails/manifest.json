@@ -3,7 +3,7 @@
   "id": "SliceDetails",
   "name": "SliceDetails",
   "author": "ckosmic",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "View your average cuts per-angle per-grid position in the pause menu and completion screen.",
   "gameVersion": "1.16.4",
   "dependsOn": {

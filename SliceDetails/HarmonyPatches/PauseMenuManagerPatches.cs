@@ -12,7 +12,8 @@ namespace SliceDetails.HarmonyPatches
 	class PauseMenuManagerPatches_ShowMenu
 	{
 		static void Postfix(ref PauseMenuManager __instance) {
-			PauseUIController.instance.PauseMenuOpened(__instance);
+			if(Plugin.Settings.ShowInPauseMenu)
+				PauseUIController.instance.PauseMenuOpened(__instance);
 		}
 	}
 
@@ -20,7 +21,8 @@ namespace SliceDetails.HarmonyPatches
 	class PauseMenuManagerPatches_StartResumeAnimation
 	{
 		static void Postfix(ref PauseMenuManager __instance) {
-			PauseUIController.instance.PauseMenuClosed(__instance);
+			if(Plugin.Settings.ShowInPauseMenu)
+				PauseUIController.instance.PauseMenuClosed(__instance);
 		}
 	}
 }

@@ -11,7 +11,8 @@ namespace SliceDetails.HarmonyPatches
 	class MenuTransitionsHelperPatch
 	{
 		static void Postfix(ref MenuTransitionsHelper __instance) {
-			PauseUIController.instance.CleanUp();
+			if(Plugin.Settings.ShowInPauseMenu)
+				PauseUIController.instance.CleanUp();
 		}
 	}
 }
