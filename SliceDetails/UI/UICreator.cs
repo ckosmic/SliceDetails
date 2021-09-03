@@ -35,7 +35,7 @@ namespace SliceDetails
 			if (instance != null) Destroy(instance.gameObject);
 			instance = this;
 			DontDestroyOnLoad(this.gameObject);
-			StartCoroutine(DelayedGetHoverHintController());
+			StartCoroutine(DelayedGetHoverHintController(false));
 			StartCoroutine(DelayedGetPauseMenuManager(delegate {
 				spr_RoundRect10 = _pauseMenuManager.transform.Find("Wrapper/MenuWrapper/Canvas/MainBar/LevelBarSimple/BG").GetComponent<ImageView>().sprite;
 			}));
@@ -96,7 +96,7 @@ namespace SliceDetails
 		}
 
 		public void CreateHoverHintControllerInstance() {
-			hoverHintController = Instantiate(_hoverHintController);
+			StartCoroutine(DelayedGetHoverHintController(true));
 		}
 
 		public void RevertHoverHintControllerInstance() {
@@ -104,10 +104,13 @@ namespace SliceDetails
 			hoverHintController = _hoverHintController;
 		}
 
-		IEnumerator DelayedGetHoverHintController() {
+		IEnumerator DelayedGetHoverHintController(bool instantiate) {
 			yield return new WaitUntil(() => Resources.FindObjectsOfTypeAll<HoverHintController>().Any());
 			_hoverHintController = Resources.FindObjectsOfTypeAll<HoverHintController>().First();
-			hoverHintController = _hoverHintController;
+			if(instantiate)
+				hoverHintController = Instantiate(_hoverHintController);
+			else
+				hoverHintController = _hoverHintController;
 		}
 
 		IEnumerator DelayedGetPauseMenuManager(Action callback) {

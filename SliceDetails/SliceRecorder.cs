@@ -46,19 +46,23 @@ namespace SliceDetails
 		private void ProcessNote(NoteController noteController, NoteCutInfo noteCutInfo) {
 			if (noteController == null) return;
 
+			Vector2 noteGridPosition;
+			noteGridPosition.y = (int)noteController.noteData.noteLineLayer;
+			noteGridPosition.x = noteController.noteData.lineIndex;
+			int noteIndex = (int)(noteGridPosition.y * 4 + noteGridPosition.x);
+
+			// No ME notes allowed >:(
+			if (noteGridPosition.x >= 4 || noteGridPosition.y >= 3 || noteGridPosition.x < 0 || noteGridPosition.y < 0) return;
+
 			Vector3 cutDirection = new Vector3(-noteCutInfo.cutNormal.y, noteCutInfo.cutNormal.x, 0f);
 			float cutAngle = Mathf.Atan2(cutDirection.y, cutDirection.x) * Mathf.Rad2Deg + 90.0f;
 
 			float cutOffset = noteCutInfo.cutDistanceToCenter;
 			Vector3 noteCenter = noteController.noteTransform.position;
-			if (Vector3.Dot(noteCutInfo.cutNormal, noteCutInfo.cutPoint - noteCenter) > 0f) {
+			if (Vector3.Dot(noteCutInfo.cutNormal, noteCutInfo.cutPoint - noteCenter) > 0f)
+			{
 				cutOffset = -cutOffset;
 			}
-
-			Vector2 noteGridPosition;
-			noteGridPosition.y = (int)noteController.noteData.noteLineLayer;
-			noteGridPosition.x = noteController.noteData.lineIndex;
-			int noteIndex = (int)(noteGridPosition.y * 4 + noteGridPosition.x);
 
 			NoteInfo noteInfo = new NoteInfo(noteController.noteData, noteCutInfo, cutAngle, cutOffset, noteGridPosition, noteIndex);
 
@@ -69,13 +73,20 @@ namespace SliceDetails
 		}
 
 		public void HandleSaberSwingRatingCounterDidFinish(ISaberSwingRatingCounter saberSwingRatingCounter) {
-			int preSwing, postSwing, offset;
-			ScoreModel.RawScoreWithoutMultiplier(saberSwingRatingCounter, _noteSwingInfos[saberSwingRatingCounter].cutInfo.cutDistanceToCenter, out preSwing, out postSwing, out offset);
+			NoteInfo noteSwingInfo;
+			if (_noteSwingInfos.TryGetValue(saberSwingRatingCounter, out noteSwingInfo))
+			{
+				int preSwing, postSwing, offset;
+				ScoreModel.RawScoreWithoutMultiplier(saberSwingRatingCounter, noteSwingInfo.cutInfo.cutDistanceToCenter, out preSwing, out postSwing, out offset);
 
-			_noteSwingInfos[saberSwingRatingCounter].score = new Score(preSwing, postSwing, offset);
+				noteSwingInfo.score = new Score(preSwing, postSwing, offset);
 
-			_noteInfos.Add(_noteSwingInfos[saberSwingRatingCounter]);
-			_noteSwingInfos.Remove(saberSwingRatingCounter);
+				_noteInfos.Add(noteSwingInfo);
+				_noteSwingInfos.Remove(saberSwingRatingCounter);
+			}
+			else {
+				// Bad cut, do nothing
+			}
 		}
 	}
 }
