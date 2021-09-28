@@ -31,15 +31,16 @@ namespace SliceDetails
 		private FloatingScreen _floatingScreen;
 		private PauseMenuManager _pauseMenuManager;
 
-		private void Start() {
+		private void Awake() {
 			if (instance != null) Destroy(instance.gameObject);
 			instance = this;
 			DontDestroyOnLoad(this.gameObject);
-			StartCoroutine(DelayedGetHoverHintController(false));
-			StartCoroutine(DelayedGetPauseMenuManager(delegate {
-				spr_RoundRect10 = _pauseMenuManager.transform.Find("Wrapper/MenuWrapper/Canvas/MainBar/LevelBarSimple/BG").GetComponent<ImageView>().sprite;
-			}));
-			
+			if (SceneManager.GetActiveScene().name == "GameCore" || SceneManager.GetActiveScene().name == "MenuCore") {
+				StartCoroutine(DelayedGetHoverHintController(false));
+				StartCoroutine(DelayedGetPauseMenuManager(delegate {
+					spr_RoundRect10 = _pauseMenuManager.transform.Find("Wrapper/MenuWrapper/Canvas/MainBar/LevelBarSimple/BG").GetComponent<ImageView>().sprite;
+				}));
+			}
 		}
 
 		public GridViewController Create(Vector3 position, Quaternion rotation) {
@@ -52,19 +53,11 @@ namespace SliceDetails
 			_floatingScreen.SetRootViewController(instance._gridViewController, ViewController.AnimationType.None);
 			_floatingScreen.ShowHandle = Plugin.Settings.ShowHandle;
 			_floatingScreen.HandleSide = FloatingScreen.Side.Bottom;
+			_floatingScreen.HighlightHandle = true;
 			_floatingScreen.handle.transform.localScale = Vector3.one * 5.0f;
 			_floatingScreen.handle.transform.localPosition = new Vector3(0.0f, -25.0f, 0.0f);
 			_floatingScreen.HandleReleased += OnHandleReleased;
 			_floatingScreen.gameObject.name = "SliceDetailsScreen";
-			if (SceneManager.GetActiveScene().name == "GameCore") {
-				StartCoroutine(DelayedGetPauseMenuManager(delegate {
-					// Screen mover needs to be completely remade for dragging to work in-game
-					VRPointer gameVRPointer = _pauseMenuManager.transform.Find("Wrapper/MenuWrapper/EventSystem").GetComponent<VRPointer>();
-					Destroy(_floatingScreen.screenMover);
-					_floatingScreen.screenMover = gameVRPointer.gameObject.AddComponent<FloatingScreenMoverPointer>();
-					_floatingScreen.screenMover.Init(_floatingScreen, gameVRPointer);
-				}));
-			}
 
 			return instance._gridViewController;
 		}

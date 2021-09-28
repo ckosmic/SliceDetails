@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using VRUIControls;
 using Zenject;
 
 namespace SliceDetails
@@ -34,11 +35,12 @@ namespace SliceDetails
 		}
 
 		public void PauseMenuClosed(PauseMenuManager pauseMenuManager) {
-			_gridViewController.transform.parent.gameObject.SetActive(false);
 			_gridViewController.CloseModal(false);
+			_gridViewController.transform.parent.gameObject.SetActive(false);
 		}
 
 		public void CleanUp() {
+			_gridViewController.CloseModal(false);
 			UICreator.instance.Remove();
 			UICreator.instance.RevertHoverHintControllerInstance();
 		}

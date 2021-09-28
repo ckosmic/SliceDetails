@@ -37,8 +37,6 @@ namespace SliceDetails
 
 		[OnStart]
 		public void OnApplicationStart() {
-			Log.Debug("OnApplicationStart");
-
 			_harmony = new Harmony("SliceDetails");
 			_harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
 
