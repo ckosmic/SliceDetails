@@ -46,7 +46,7 @@ namespace SliceDetails
 		}
 
 		public void Dispose() {
-			
+			instance = null;
 		}
 	}
 }

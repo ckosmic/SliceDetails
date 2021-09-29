@@ -45,7 +45,7 @@ namespace SliceDetails
 
 		private void ProcessNote(NoteController noteController, NoteCutInfo noteCutInfo) {
 			if (noteController == null) return;
-
+			
 			Vector2 noteGridPosition;
 			noteGridPosition.y = (int)noteController.noteData.noteLineLayer;
 			noteGridPosition.x = noteController.noteData.lineIndex;
