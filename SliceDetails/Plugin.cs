@@ -32,7 +32,8 @@ namespace SliceDetails
 			Log = logger;
 			Settings = config.Generated<SettingsStore>();
 			BSMLSettings.instance.AddSettingsMenu("SliceDetails", $"SliceDetails.UI.Views.settingsView.bsml", SettingsViewController.instance);
-			zenject.OnGame<SDGameInstaller>(false).OnlyForStandard();
+			zenject.Install<SDGameInstaller>(Location.StandardPlayer); // For Sira 3
+			//zenject.OnGame<SDGameInstaller>(false).OnlyForStandard(); // For Sira 2
 		}
 
 		[OnStart]

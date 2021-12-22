@@ -7,6 +7,8 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
+using IPA.Utilities;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -54,6 +56,8 @@ namespace SliceDetails
 		private readonly ImageView _noteCutArrow;
 		[UIComponent("note-cut-distance")]
 		private readonly ImageView _noteCutDistance;
+		[UIComponent("sd-version")]
+		private readonly TextMeshProUGUI _sdVersionText;
 
 		private List<ClickableImage> _tiles = new List<ClickableImage>();
 		private List<NoteUI> _notes = new List<NoteUI>();
@@ -68,6 +72,11 @@ namespace SliceDetails
 			_noteDirArrow.gameObject.name = "NoteDirArrow";
 			_noteCutArrow.gameObject.name = "NoteCutArrow";
 			_noteCutDistance.gameObject.name = "NoteCutDistance";
+
+			_sdVersionText.text = $"SliceDetails v{ System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3) }";
+			ReflectionUtil.InvokeMethod<object, TextMeshProUGUI>(_sdVersionText, "Awake"); // For some reason this is necessary
+			_sdVersionText.rectTransform.sizeDelta = new Vector2(40.0f, 10.0f);
+			_sdVersionText.transform.localPosition = new Vector3(0.0f, -17.0f, 0.0f);
 
 			_tiles = new List<ClickableImage>();
 			// Create first row of tiles
@@ -117,6 +126,8 @@ namespace SliceDetails
 			_selectedTileIndicator.transform.SetParent(_noteModal.transform, false);
 			_selectedTileIndicator.transform.localPosition = new Vector3(0f, 30f, 0f);
 
+			UICreator.instance.basicUIAudioManager = Resources.FindObjectsOfTypeAll<BasicUIAudioManager>().First(x => x.GetComponent<AudioSource>().enabled && x.isActiveAndEnabled);
+
 			DestroyImmediate(_note.gameObject);
 			DestroyImmediate(_noteRow);
 			DestroyImmediate(_noteGrid);
@@ -144,6 +155,12 @@ namespace SliceDetails
 
 				_notes[i].SetNoteData(angle, offset, score);
 			}
+		}
+
+		[UIAction("#presentNotesModal")]
+		public void PresentModal() {
+			if (UICreator.instance.basicUIAudioManager != null)
+				UICreator.instance.basicUIAudioManager.HandleButtonClickEvent();
 		}
 
 		public void CloseModal(bool animated) {

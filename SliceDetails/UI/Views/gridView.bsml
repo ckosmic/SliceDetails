@@ -5,7 +5,7 @@
 				<horizontal id='tile-row'>
 				</horizontal>
 			</vertical>
-			<clickable-image id='tile' src='SliceDetails.Resources.bloq.png' default-color='#777777' highlight-color='#eeeeee' preferred-width='10' preferred-height='10' click-event='presentNotesModal'>
+			<clickable-image id='tile' src='SliceDetails.Resources.bloq_gradient.png' default-color='#777777' highlight-color='#eeeeee' preferred-width='10' preferred-height='10' click-event='presentNotesModal'>
 				<!--<image id='tile-dot' src='SliceDetails.Resources.dot.png' size-delta-x='10' size-delta-y='10'></image>-->
 				<text text='' font-size='3' face-color='#ffffff' font-align='Center'></text>
 			</clickable-image>
@@ -26,4 +26,5 @@
 			</horizontal>
 		</modal>
 	</vertical>
+	<text id='sd-version' text='SliceDetails v' font-size='2' font-color='#999' font-align='Right' ignore-layout='true' preferred-width='5'/>
 </bg>

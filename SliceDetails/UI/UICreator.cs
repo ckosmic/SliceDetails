@@ -25,6 +25,7 @@ namespace SliceDetails
 		public static Sprite spr_RoundRect10;
 
 		public HoverHintController hoverHintController;
+		public BasicUIAudioManager basicUIAudioManager;
 
 		private HoverHintController _hoverHintController;
 		private GridViewController _gridViewController;
@@ -35,12 +36,12 @@ namespace SliceDetails
 			if (instance != null) Destroy(instance.gameObject);
 			instance = this;
 			DontDestroyOnLoad(this.gameObject);
-			if (SceneManager.GetActiveScene().name == "GameCore" || SceneManager.GetActiveScene().name == "MenuCore") {
-				StartCoroutine(DelayedGetHoverHintController(false));
-				StartCoroutine(DelayedGetPauseMenuManager(delegate {
-					spr_RoundRect10 = _pauseMenuManager.transform.Find("Wrapper/MenuWrapper/Canvas/MainBar/LevelBarSimple/BG").GetComponent<ImageView>().sprite;
-				}));
-			}
+
+			// Grab hover hint controller and PauseMenuManager/round sprite once they're available
+			StartCoroutine(DelayedGetHoverHintController(false));
+			StartCoroutine(DelayedGetPauseMenuManager(delegate {
+				spr_RoundRect10 = _pauseMenuManager.transform.Find("Wrapper/MenuWrapper/Canvas/MainBar/LevelBarSimple/BG").GetComponent<ImageView>().sprite;
+			}));
 		}
 
 		public GridViewController Create(Vector3 position, Quaternion rotation) {

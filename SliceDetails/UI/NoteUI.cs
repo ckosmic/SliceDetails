@@ -112,7 +112,7 @@ namespace SliceDetails
 					_cutDistanceImage.transform.localScale = new Vector2(-offset * (1.995f + score.Offset*0.0665f), 1.0f);
 				}
 				_directionArrowImage.color = Color.white;
-				_noteHoverHint.text = "Average score - " + String.Format("{0:0.00}", score.TotalScore) + " (" + String.Format("{0:0.00}", score.PreSwing) + ", " + String.Format("{0:0.00}", score.PostSwing) + ", " + String.Format("{0:0.00}", score.Offset) + ")";
+				_noteHoverHint.text = "Average score - " + String.Format("{0:0.00}", score.TotalScore) + " <color=#666666>(" + String.Format("{0:0.00}", score.PreSwing) + ", " + String.Format("{0:0.00}", score.PostSwing) + ", " + String.Format("{0:0.00}", score.Offset) + ")</color>";
 			}
 		}
 	}

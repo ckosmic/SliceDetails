@@ -3,13 +3,13 @@
   "id": "SliceDetails",
   "name": "SliceDetails",
   "author": "ckosmic",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "View your average cuts per-angle per-grid position in the pause menu and completion screen.",
-  "gameVersion": "1.18.0",
+  "gameVersion": "1.19.0",
   "dependsOn": {
-    "BSIPA": "^4.2.0",
-    "BeatSaberMarkupLanguage": "^1.5.10",
-    "SiraUtil": "^2.5.8"
+    "BSIPA": "^4.2.1",
+    "BeatSaberMarkupLanguage": "^1.6.0",
+    "SiraUtil": "^3.0.0"
   },
   "links": {
     "project-source": "https://github.com/ckosmic/SliceDetails"
