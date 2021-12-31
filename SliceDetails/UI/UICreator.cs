@@ -1,57 +1,34 @@
-﻿using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.FloatingScreen;
+﻿using BeatSaberMarkupLanguage.FloatingScreen;
 using HMUI;
-using SliceDetails.Utils;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SiraUtil.Logging;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using VRUIControls;
 
-namespace SliceDetails
+namespace SliceDetails.UI
 {
-	internal class UICreator : MonoBehaviour
+	internal class UICreator
 	{
-		public static UICreator instance { get; private set; }
+		private readonly GridViewController _gridViewController;
+		private readonly SliceProcessor _sliceProcessor;
+		private readonly SiraLog _siraLog;
 
-		public static Sprite spr_arrow = ResourceUtilities.LoadSpriteFromResource("SliceDetails.Resources.arrow.png");
-		public static Sprite spr_dot = ResourceUtilities.LoadSpriteFromResource("SliceDetails.Resources.dot.png");
-		public static Sprite spr_RoundRect10;
+		private FloatingScreen _floatingScreen;
 
 		public HoverHintController hoverHintController;
-		public BasicUIAudioManager basicUIAudioManager;
 
-		private HoverHintController _hoverHintController;
-		private GridViewController _gridViewController;
-		private FloatingScreen _floatingScreen;
-		private PauseMenuManager _pauseMenuManager;
-
-		private void Awake() {
-			if (instance != null) Destroy(instance.gameObject);
-			instance = this;
-			DontDestroyOnLoad(this.gameObject);
-
-			// Grab hover hint controller and PauseMenuManager/round sprite once they're available
-			StartCoroutine(DelayedGetHoverHintController(false));
-			StartCoroutine(DelayedGetPauseMenuManager(delegate {
-				spr_RoundRect10 = _pauseMenuManager.transform.Find("Wrapper/MenuWrapper/Canvas/MainBar/LevelBarSimple/BG").GetComponent<ImageView>().sprite;
-			}));
+		public UICreator(SiraLog siraLog, GridViewController gridViewController, SliceProcessor sliceProcesssor) {
+			_siraLog = siraLog;
+			_gridViewController = gridViewController;
+			_sliceProcessor = sliceProcesssor;
 		}
 
-		public GridViewController Create(Vector3 position, Quaternion rotation) {
-			if (_floatingScreen != null || instance._gridViewController != null)
-				Remove();
+		public void CreateFloatingScreen(Vector3 position, Quaternion rotation) {
+			_siraLog.Info("Creating floating screen: " + (_gridViewController == null));
+			_gridViewController.UpdateUINotesHoverHintController();
 
-			instance._gridViewController = BeatSaberUI.CreateViewController<GridViewController>();
 
 			_floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(150f, 120f), true, position, rotation);
-			_floatingScreen.SetRootViewController(instance._gridViewController, ViewController.AnimationType.None);
+			_floatingScreen.SetRootViewController(_gridViewController, ViewController.AnimationType.None);
 			_floatingScreen.ShowHandle = Plugin.Settings.ShowHandle;
 			_floatingScreen.HandleSide = FloatingScreen.Side.Bottom;
 			_floatingScreen.HighlightHandle = true;
@@ -59,20 +36,26 @@ namespace SliceDetails
 			_floatingScreen.handle.transform.localPosition = new Vector3(0.0f, -25.0f, 0.0f);
 			_floatingScreen.HandleReleased += OnHandleReleased;
 			_floatingScreen.gameObject.name = "SliceDetailsScreen";
+			_floatingScreen.transform.localScale = Vector3.one * 0.03f;
 
-			return instance._gridViewController;
+			_gridViewController.SetTileScores();
+			_gridViewController.transform.localScale = Vector3.one;
+			_gridViewController.transform.localEulerAngles = Vector3.zero;
+			_gridViewController.gameObject.SetActive(true);
 		}
 
-		public void Remove() {
+		public void RemoveFloatingScreen() {
 			// Destroying the hover hint panel breaks everything so move it out of the screen before destroying
 			if (_floatingScreen != null) {
 				if (_floatingScreen.transform.GetComponentInChildren<HoverHintPanel>(true)) {
 					Transform hoverHintPanel = _floatingScreen.transform.GetComponentInChildren<HoverHintPanel>(true).transform;
 					hoverHintPanel.SetParent(null);
 				}
-				Destroy(_floatingScreen.gameObject);
+				_gridViewController.transform.SetParent(null);
+				_gridViewController.gameObject.SetActive(false);
+				UnityEngine.Object.Destroy(_floatingScreen.gameObject);
 			}
-			SliceProcessor.instance.ResetProcessor();
+			_sliceProcessor.ResetProcessor();
 		}
 
 		public void ParentFloatingScreen(Transform parent) {
@@ -87,30 +70,6 @@ namespace SliceDetails
 				Plugin.Settings.PauseUIPosition = _floatingScreen.transform.position;
 				Plugin.Settings.PauseUIRotation = _floatingScreen.transform.eulerAngles;
 			}
-		}
-
-		public void CreateHoverHintControllerInstance() {
-			StartCoroutine(DelayedGetHoverHintController(true));
-		}
-
-		public void RevertHoverHintControllerInstance() {
-			DestroyImmediate(hoverHintController.gameObject);
-			hoverHintController = _hoverHintController;
-		}
-
-		IEnumerator DelayedGetHoverHintController(bool instantiate) {
-			yield return new WaitUntil(() => Resources.FindObjectsOfTypeAll<HoverHintController>().Any());
-			_hoverHintController = Resources.FindObjectsOfTypeAll<HoverHintController>().First();
-			if(instantiate)
-				hoverHintController = Instantiate(_hoverHintController);
-			else
-				hoverHintController = _hoverHintController;
-		}
-
-		IEnumerator DelayedGetPauseMenuManager(Action callback) {
-			yield return new WaitUntil(() => Resources.FindObjectsOfTypeAll<PauseMenuManager>().Any());
-			_pauseMenuManager = Resources.FindObjectsOfTypeAll<PauseMenuManager>().First();
-			callback.Invoke();
 		}
 	}
 }

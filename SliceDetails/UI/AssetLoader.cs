@@ -1,16 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
-namespace SliceDetails.Utils
+namespace SliceDetails.UI
 {
-	internal class ResourceUtilities
+	internal class AssetLoader
 	{
+		public Sprite spr_arrow { get; }
+		public Sprite spr_dot { get; }
+		public Sprite spr_roundrect { get; }
+
+		public AssetLoader() {
+			spr_arrow = LoadSpriteFromResource("SliceDetails.Resources.arrow.png");
+			spr_dot = LoadSpriteFromResource("SliceDetails.Resources.dot.png");
+			spr_roundrect = LoadSpriteFromResource("SliceDetails.Resources.bloq.png");
+		}
+
 		public static Sprite LoadSpriteFromResource(string path) {
 			Assembly assembly = Assembly.GetCallingAssembly();
 			using (Stream stream = assembly.GetManifestResourceStream(path)) {
@@ -22,9 +27,6 @@ namespace SliceDetails.Utils
 						Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 100);
 						return sprite;
 					}
-				} else {
-					Plugin.Log.Error("Failed to open sprite resource stream.");
-					return null;
 				}
 			}
 			return null;

@@ -1,31 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using static BeatmapSaveData;
 using Zenject;
 
 namespace SliceDetails
 {
 	internal class SliceRecorder : IInitializable, IDisposable, ISaberSwingRatingCounterDidFinishReceiver
 	{
-		public static SliceRecorder instance { get; private set; }
-
-		private BeatmapObjectManager _beatmapObjectManager;
+		private readonly BeatmapObjectManager _beatmapObjectManager;
+		private readonly SliceProcessor _sliceProcessor;
 
 		private Dictionary<ISaberSwingRatingCounter, NoteInfo> _noteSwingInfos = new Dictionary<ISaberSwingRatingCounter, NoteInfo>();
 		private List<NoteInfo> _noteInfos = new List<NoteInfo>();
 
-		public SliceRecorder(BeatmapObjectManager beatmapObjectManager) {
+		public SliceRecorder(BeatmapObjectManager beatmapObjectManager, SliceProcessor sliceProcessor) {
 			_beatmapObjectManager = beatmapObjectManager;
+			_sliceProcessor = sliceProcessor;
 		}
 
 		public void Initialize() {
-			instance = this;
 			_beatmapObjectManager.noteWasCutEvent += OnNoteWasCut;
-			SliceProcessor.instance.ResetProcessor();
+			_sliceProcessor.ResetProcessor();
 		}
 
 		public void Dispose() {
@@ -35,7 +30,7 @@ namespace SliceDetails
 		}
 
 		public void ProcessSlices() {
-			SliceProcessor.instance.ProcessSlices(_noteInfos);
+			_sliceProcessor.ProcessSlices(_noteInfos);
 		}
 
 		private void OnNoteWasCut(NoteController noteController, in NoteCutInfo noteCutInfo) {

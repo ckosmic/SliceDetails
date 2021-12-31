@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SliceDetails.AffinityPatches;
+using SliceDetails.UI;
 using Zenject;
 
 namespace SliceDetails.Installers
@@ -11,7 +8,12 @@ namespace SliceDetails.Installers
 	{
 		public override void InstallBindings() {
 			Container.BindInterfacesAndSelfTo<SliceRecorder>().AsSingle();
+			Container.Bind<GridViewController>().FromNewComponentAsViewController().AsSingle();
+			Container.Bind<UICreator>().AsSingle();
 			Container.BindInterfacesAndSelfTo<PauseUIController>().AsSingle();
+
+			Container.BindInterfacesAndSelfTo<PauseMenuManagerPatches>().AsSingle();
+			Container.BindInterfacesAndSelfTo<MenuTransitionsHelperPatch>().AsSingle();
 		}
 	}
 }

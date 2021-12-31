@@ -2,13 +2,9 @@
 using IPA.Utilities;
 using SliceDetails.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
-namespace SliceDetails
+namespace SliceDetails.UI
 {
 
 	internal class NoteUI : MonoBehaviour
@@ -21,10 +17,11 @@ namespace SliceDetails
 
 		private Color _noteColor;
 		private HoverHint _noteHoverHint;
+		private HoverHintController _hoverHintController;
 
 		private float _noteRotation;
 
-		public void Initialize (OrderedNoteCutDirection cutDirection, ColorType colorType) {
+		public void Initialize(OrderedNoteCutDirection cutDirection, ColorType colorType, AssetLoader assetLoader) {
 			transform.localScale = Vector3.one * 0.9f;
 
 			_backgroundImage = GetComponent<ImageView>();
@@ -83,15 +80,19 @@ namespace SliceDetails
 					break;
 				case OrderedNoteCutDirection.Any:
 					_noteRotation = 0.0f;
-					_directionArrowImage.sprite = UICreator.spr_dot;
+					_directionArrowImage.sprite = assetLoader.spr_dot;
 					break;
 			}
 
 			transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, _noteRotation));
 		}
 
+		public void SetHoverHintController(HoverHintController hoverHintController) {
+			_hoverHintController = hoverHintController;
+		}
+
 		public void SetNoteData(float angle, float offset, Score score) {
-			_noteHoverHint.SetField("_hoverHintController", UICreator.instance.hoverHintController);
+			_noteHoverHint.SetField("_hoverHintController", _hoverHintController);
 
 			if (angle == 0f && offset == 0f) {
 				_backgroundImage.color = Color.gray;

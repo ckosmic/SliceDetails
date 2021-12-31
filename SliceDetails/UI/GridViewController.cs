@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
 using IPA.Utilities;
+using SiraUtil.Logging;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Zenject;
 
-namespace SliceDetails
+namespace SliceDetails.UI
 {
 	public enum OrderedNoteCutDirection
 	{
@@ -28,9 +28,14 @@ namespace SliceDetails
 		None = 9
 	}
 
-	internal class GridViewController : BSMLResourceViewController {
-		// For this method of setting the ResourceName, this class must be the first class in the file.
-		public override string ResourceName => "SliceDetails.UI.Views.gridView.bsml";
+	[HotReload(RelativePathToLayout = @"Views\gridView.bsml")]
+	[ViewDefinition("SliceDetails.UI.Views.gridView.bsml")]
+	internal class GridViewController : BSMLAutomaticViewController {
+
+		private SiraLog _siraLog;
+		private AssetLoader _assetLoader;
+		private HoverHintControllerHandler _hoverHintControllerHandler;
+		private SliceProcessor _sliceProcessor;
 
 		[UIObject("tile-grid")]
 		private readonly GameObject _tileGrid;
@@ -62,13 +67,20 @@ namespace SliceDetails
 		private List<ClickableImage> _tiles = new List<ClickableImage>();
 		private List<NoteUI> _notes = new List<NoteUI>();
 		private SelectedTileIndicator _selectedTileIndicator;
+		private BasicUIAudioManager _basicUIAudioManager;
 
-		private const float _scale = 0.03f;
+
+		[Inject]
+		internal void Construct(SiraLog siraLog, AssetLoader assetLoader, HoverHintControllerHandler hoverHintControllerHandler, SliceProcessor sliceProcessor) {
+			_siraLog = siraLog;
+			_assetLoader = assetLoader;
+			_hoverHintControllerHandler = hoverHintControllerHandler;
+			_sliceProcessor = sliceProcessor;
+			_siraLog.Debug("GridViewController Constructed");
+		}
 
 		[UIAction("#post-parse")]
 		public void PostParse() {
-			transform.parent.localScale = Vector3.one * _scale;
-
 			_noteDirArrow.gameObject.name = "NoteDirArrow";
 			_noteCutArrow.gameObject.name = "NoteCutArrow";
 			_noteCutDistance.gameObject.name = "NoteCutDistance";
@@ -103,6 +115,7 @@ namespace SliceDetails
 			Transform noteParent = _noteRow.transform;
 			Transform rowParent = _noteGrid.transform;
 			_notes = new List<NoteUI>();
+			HoverHintController currentHoverHintController = _hoverHintControllerHandler.hoverHintController;
 			for (int i = 0; i < 18; i++) {
 				if (i % 9 == 0) {
 					rowParent = Instantiate(_noteGrid, _noteHorizontal.transform).transform;
@@ -114,7 +127,8 @@ namespace SliceDetails
 				ColorType colorType = (ColorType)(i >= 9 ? 1 : 0);
 				OrderedNoteCutDirection cutDirection = (OrderedNoteCutDirection)(i % 9);
 				NoteUI uiNote = Instantiate(_note.gameObject, noteParent).AddComponent<NoteUI>();
-				uiNote.Initialize(cutDirection, colorType);
+				uiNote.Initialize(cutDirection, colorType, _assetLoader);
+				uiNote.SetHoverHintController(currentHoverHintController);
 
 				_notes.Add(uiNote);
 			}
@@ -122,11 +136,11 @@ namespace SliceDetails
 			SetTileScores();
 
 			_selectedTileIndicator = new GameObject("SelectedTileIndicator").AddComponent<SelectedTileIndicator>();
-			_selectedTileIndicator.Initialize();
+			_selectedTileIndicator.Initialize(_assetLoader);
 			_selectedTileIndicator.transform.SetParent(_noteModal.transform, false);
 			_selectedTileIndicator.transform.localPosition = new Vector3(0f, 30f, 0f);
 
-			UICreator.instance.basicUIAudioManager = Resources.FindObjectsOfTypeAll<BasicUIAudioManager>().First(x => x.GetComponent<AudioSource>().enabled && x.isActiveAndEnabled);
+			_basicUIAudioManager = Resources.FindObjectsOfTypeAll<BasicUIAudioManager>().First(x => x.GetComponent<AudioSource>().enabled && x.isActiveAndEnabled);
 
 			DestroyImmediate(_note.gameObject);
 			DestroyImmediate(_noteRow);
@@ -137,8 +151,8 @@ namespace SliceDetails
 		public void SetTileScores() {
 			for (int i = 0; i < _tiles.Count; i++) {
 				FormattableText text = _tiles[i].transform.GetComponentInChildren<FormattableText>();
-				if (SliceProcessor.instance.tiles[i].atLeastOneNote)
-					text.text = String.Format("{0:0.00}", SliceProcessor.instance.tiles[i].scoreAverage);
+				if (_sliceProcessor.tiles[i].atLeastOneNote)
+					text.text = String.Format("{0:0.00}", _sliceProcessor.tiles[i].scoreAverage);
 				else
 					text.text = "";
 			}
@@ -147,7 +161,7 @@ namespace SliceDetails
 		private void SetNotesData(PointerEventData eventData) {
 			int tileIndex = _tiles.IndexOf(eventData.pointerPress.GetComponent<ClickableImage>());
 			_selectedTileIndicator.SetSelectedTile(tileIndex);
-			Tile tile = SliceProcessor.instance.tiles[tileIndex];
+			Tile tile = _sliceProcessor.tiles[tileIndex];
 			for (int i = 0; i < _notes.Count; i++) {
 				float angle = tile.angleAverages[i];
 				float offset = tile.offsetAverages[i];
@@ -159,12 +173,19 @@ namespace SliceDetails
 
 		[UIAction("#presentNotesModal")]
 		public void PresentModal() {
-			if (UICreator.instance.basicUIAudioManager != null)
-				UICreator.instance.basicUIAudioManager.HandleButtonClickEvent();
+			if (_basicUIAudioManager != null)
+				_basicUIAudioManager.HandleButtonClickEvent();
 		}
 
 		public void CloseModal(bool animated) {
 			_noteModal.GetComponent<ModalView>().Hide(animated);
+		}
+
+		public void UpdateUINotesHoverHintController() {
+			HoverHintController currentHoverHintController = _hoverHintControllerHandler.hoverHintController;
+			for (int i = 0; i < _notes.Count; i++) {
+				_notes[i].SetHoverHintController(currentHoverHintController);
+			}
 		}
 	}
 }

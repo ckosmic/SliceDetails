@@ -1,52 +1,48 @@
-﻿using HMUI;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using VRUIControls;
+﻿using UnityEngine;
 using Zenject;
 
-namespace SliceDetails
+namespace SliceDetails.UI
 {
-	internal class PauseUIController : IInitializable, IDisposable
+	internal class PauseUIController : IInitializable
 	{
-		public static PauseUIController instance { get; private set; }
+		private readonly SliceRecorder _sliceRecorder;
+		private readonly UICreator _uiCreator;
+		private readonly HoverHintControllerHandler _hoverHintControllerHandler;
 
-		private static GridViewController _gridViewController;
+		private GridViewController _gridViewController;
+		private GameObject _gridViewControllerParent;
+
+		public PauseUIController(SliceRecorder sliceRecorder, UICreator uiCreator, GridViewController gridViewController, HoverHintControllerHandler hoverHintControllerHandler) {
+			_sliceRecorder = sliceRecorder;
+			_uiCreator = uiCreator;
+			_gridViewController = gridViewController;
+			_hoverHintControllerHandler = hoverHintControllerHandler;
+		}
 
 		public void Initialize() {
-			instance = this;
 			if (Plugin.Settings.ShowInPauseMenu) {
-				_gridViewController = UICreator.instance.Create(Plugin.Settings.PauseUIPosition, Quaternion.Euler(Plugin.Settings.PauseUIRotation));
-				_gridViewController.transform.parent.gameObject.SetActive(false);
-				UICreator.instance.CreateHoverHintControllerInstance();
+				_hoverHintControllerHandler.CloneHoverHintController();
+				_uiCreator.CreateFloatingScreen(Plugin.Settings.PauseUIPosition, Quaternion.Euler(Plugin.Settings.PauseUIRotation));
+				_gridViewControllerParent = _gridViewController.transform.parent.gameObject;
+				_gridViewControllerParent?.SetActive(false);
 			}
 		}
 
 		public void PauseMenuOpened(PauseMenuManager pauseMenuManager) {
-			_gridViewController.transform.parent.gameObject.SetActive(true);
-			UICreator.instance.ParentFloatingScreen(pauseMenuManager.transform);
-			SliceRecorder.instance.ProcessSlices();
+			_gridViewControllerParent?.SetActive(true);
+			_uiCreator.ParentFloatingScreen(pauseMenuManager.transform);
+			_sliceRecorder.ProcessSlices();
 			_gridViewController.SetTileScores();
 		}
 
 		public void PauseMenuClosed(PauseMenuManager pauseMenuManager) {
 			_gridViewController.CloseModal(false);
-			_gridViewController.transform.parent.gameObject.SetActive(false);
+			_gridViewControllerParent?.SetActive(false);
 		}
 
 		public void CleanUp() {
 			_gridViewController.CloseModal(false);
-			UICreator.instance.Remove();
-			UICreator.instance.RevertHoverHintControllerInstance();
-		}
-
-		public void Dispose() {
-			instance = null;
+			_uiCreator.RemoveFloatingScreen();
 		}
 	}
 }

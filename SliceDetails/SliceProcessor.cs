@@ -1,23 +1,13 @@
-﻿using System;
+﻿using SliceDetails.UI;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 
 namespace SliceDetails
 {
-	internal class SliceProcessor : MonoBehaviour
+	internal class SliceProcessor
 	{
-		public static SliceProcessor instance { get; private set; }
-
 		public Tile[] tiles = new Tile[12];
 		public bool ready { get; private set; } = false;
-
-		public void Awake() {
-			instance = this;
-			DontDestroyOnLoad(this.gameObject);
-		}
 
 		public void ResetProcessor() {
 			ready = false;
