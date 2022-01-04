@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+using SliceDetails.Data;
 
 namespace SliceDetails
 {

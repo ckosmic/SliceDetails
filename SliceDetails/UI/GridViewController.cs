@@ -11,6 +11,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
+using SliceDetails.Data;
 
 namespace SliceDetails.UI
 {
@@ -132,8 +133,6 @@ namespace SliceDetails.UI
 
 				_notes.Add(uiNote);
 			}
-
-			SetTileScores();
 
 			_selectedTileIndicator = new GameObject("SelectedTileIndicator").AddComponent<SelectedTileIndicator>();
 			_selectedTileIndicator.Initialize(_assetLoader);

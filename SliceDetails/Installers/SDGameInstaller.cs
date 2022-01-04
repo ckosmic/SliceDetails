@@ -12,8 +12,8 @@ namespace SliceDetails.Installers
 			Container.Bind<UICreator>().AsSingle();
 			Container.BindInterfacesAndSelfTo<PauseUIController>().AsSingle();
 
-			Container.BindInterfacesAndSelfTo<PauseMenuManagerPatches>().AsSingle();
-			Container.BindInterfacesAndSelfTo<MenuTransitionsHelperPatch>().AsSingle();
+			Container.BindInterfacesTo<PauseMenuManagerPatches>().AsSingle();
+			Container.BindInterfacesTo<MenuTransitionsHelperPatch>().AsSingle();
 		}
 	}
 }

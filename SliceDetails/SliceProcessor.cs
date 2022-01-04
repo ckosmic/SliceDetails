@@ -1,4 +1,5 @@
 ﻿using SliceDetails.UI;
+using SliceDetails.Data;
 using System;
 using System.Collections.Generic;
 

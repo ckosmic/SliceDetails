@@ -1,6 +1,7 @@
 ﻿using HMUI;
 using IPA.Utilities;
 using SliceDetails.Utils;
+using SliceDetails.Data;
 using System;
 using UnityEngine;
 

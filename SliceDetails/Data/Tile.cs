@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace SliceDetails
+namespace SliceDetails.Data
 {
 	internal class Tile
 	{

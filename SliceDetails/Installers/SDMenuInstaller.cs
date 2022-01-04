@@ -11,8 +11,8 @@ namespace SliceDetails.Installers
 			Container.Bind<GridViewController>().FromNewComponentAsViewController().AsSingle();
 			Container.Bind<UICreator>().AsSingle();
 
-			Container.BindInterfacesAndSelfTo<ResultsViewControllerPatch>().AsSingle();
-			Container.BindInterfacesAndSelfTo<SoloFreePlayFlowCoordinatorPatch>().AsSingle();
+			Container.BindInterfacesTo<ResultsViewControllerPatch>().AsSingle();
+			Container.BindInterfacesTo<SoloFreePlayFlowCoordinatorPatch>().AsSingle();
 		}
 	}
 }
