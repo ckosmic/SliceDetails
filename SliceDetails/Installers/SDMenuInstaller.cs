@@ -12,6 +12,7 @@ namespace SliceDetails.Installers
 			Container.Bind<UICreator>().AsSingle();
 
 			Container.BindInterfacesTo<ResultsViewControllerPatch>().AsSingle();
+			Container.BindInterfacesTo<PartyFreePlayFlowCoordinatorPatch>().AsSingle();
 			Container.BindInterfacesTo<SoloFreePlayFlowCoordinatorPatch>().AsSingle();
 		}
 	}
