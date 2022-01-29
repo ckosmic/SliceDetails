@@ -30,19 +30,26 @@ namespace SliceDetails.Data
 			int noteCount = 0;
 			for (int i = 0; i < tileNoteInfos.Length; i++) {
 				if (tileNoteInfos[i].Count > 0) {
-					Vector2 angleXYAverages = Vector2.zero;
+					//Vector2 angleXYAverages = Vector2.zero;
 					foreach (NoteInfo noteInfo in tileNoteInfos[i]) {
 						atLeastOneNote = true;
-						angleXYAverages.x += Mathf.Cos(noteInfo.cutAngle * Mathf.PI / 180f);
-						angleXYAverages.y += Mathf.Sin(noteInfo.cutAngle * Mathf.PI / 180f);
+						//angleXYAverages.x += Mathf.Cos(noteInfo.cutAngle * Mathf.PI / 180f);
+						//angleXYAverages.y += Mathf.Sin(noteInfo.cutAngle * Mathf.PI / 180f);
+						
+								// Could just use noteInfo.cutInfo.cutDirDeviation directly
+						//angleAverages[i] += noteInfo.cutInfo.cutDirDeviation;
+						angleAverages[i] += noteInfo.cutAngle;
+
 						offsetAverages[i] += noteInfo.cutOffset;
 						scoreAverages[i] += noteInfo.score;
 						scoreAverage += noteInfo.score.TotalScore;
 						noteCount++;
 					}
-					angleXYAverages.x /= tileNoteInfos[i].Count;
-					angleXYAverages.y /= tileNoteInfos[i].Count;
-					angleAverages[i] = Mathf.Atan2(angleXYAverages.y, angleXYAverages.x) * 180f / Mathf.PI;
+					//angleXYAverages.x /= tileNoteInfos[i].Count;
+					//angleXYAverages.y /= tileNoteInfos[i].Count;
+					//angleAverages[i] = Mathf.Atan2(angleXYAverages.y, angleXYAverages.x) * 180f / Mathf.PI;
+
+					angleAverages[i] /= tileNoteInfos[i].Count;
 					offsetAverages[i] /= tileNoteInfos[i].Count;
 					scoreAverages[i] /= tileNoteInfos[i].Count;
 				}
