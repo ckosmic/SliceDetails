@@ -30,15 +30,19 @@ namespace SliceDetails.Data
 			int noteCount = 0;
 			for (int i = 0; i < tileNoteInfos.Length; i++) {
 				if (tileNoteInfos[i].Count > 0) {
+					Vector2 angleXYAverages = Vector2.zero;
 					foreach (NoteInfo noteInfo in tileNoteInfos[i]) {
 						atLeastOneNote = true;
-						angleAverages[i] += noteInfo.cutAngle;
+						angleXYAverages.x += Mathf.Cos(noteInfo.cutAngle * Mathf.PI / 180f);
+						angleXYAverages.y += Mathf.Sin(noteInfo.cutAngle * Mathf.PI / 180f);
 						offsetAverages[i] += noteInfo.cutOffset;
 						scoreAverages[i] += noteInfo.score;
 						scoreAverage += noteInfo.score.TotalScore;
 						noteCount++;
 					}
-					angleAverages[i] /= tileNoteInfos[i].Count;
+					angleXYAverages.x /= tileNoteInfos[i].Count;
+					angleXYAverages.y /= tileNoteInfos[i].Count;
+					angleAverages[i] = Mathf.Atan2(angleXYAverages.y, angleXYAverages.x) * 180f / Mathf.PI;
 					offsetAverages[i] /= tileNoteInfos[i].Count;
 					scoreAverages[i] /= tileNoteInfos[i].Count;
 				}
