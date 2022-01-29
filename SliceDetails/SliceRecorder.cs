@@ -51,8 +51,9 @@ namespace SliceDetails
 			// No ME notes allowed >:(
 			if (noteGridPosition.x >= 4 || noteGridPosition.y >= 3 || noteGridPosition.x < 0 || noteGridPosition.y < 0) return;
 
-			Vector2 cutDirection = new Vector3(-noteCutInfo.cutNormal.y, noteCutInfo.cutNormal.x);
-			float cutAngle = Mathf.Atan2(cutDirection.y, cutDirection.x) * Mathf.Rad2Deg + 180f;
+			//Vector2 cutDirection = new Vector3(-noteCutInfo.cutNormal.y, noteCutInfo.cutNormal.x);
+			//float cutAngle = Mathf.Atan2(cutDirection.y, cutDirection.x) * Mathf.Rad2Deg + 180f;
+			float cutAngle = noteCutInfo.cutDirDeviation;
 
 			float cutOffset = noteCutInfo.cutDistanceToCenter;
 			Vector3 noteCenter = noteController.noteTransform.position;
