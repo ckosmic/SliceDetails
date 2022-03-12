@@ -105,7 +105,6 @@ namespace SliceDetails.UI
 				_backgroundImage.color = _noteColor;
 				_cutArrowImage.gameObject.SetActive(true);
 				_cutDistanceImage.gameObject.SetActive(true);
-				//_cutGroup.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, angle - _noteRotation - 90f));
 				_cutGroup.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, angle));
 				if (Plugin.Settings.TrueCutOffsets) {
 					_cutArrowImage.transform.localPosition = new Vector3(offset * 20.0f, 0f, 0f);
