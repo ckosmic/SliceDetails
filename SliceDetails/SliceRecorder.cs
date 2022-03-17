@@ -75,19 +75,37 @@ namespace SliceDetails
 			if (_noteSwingInfos.TryGetValue(scoringElement.noteData, out noteSwingInfo))
 			{
 				GoodCutScoringElement goodScoringElement = (GoodCutScoringElement)scoringElement;
-				if (goodScoringElement.noteData.scoringType == NoteData.ScoringType.Normal)
+
+				IReadonlyCutScoreBuffer cutScoreBuffer = goodScoringElement.cutScoreBuffer;
+
+				int preSwing = cutScoreBuffer.beforeCutScore;
+				int postSwing = cutScoreBuffer.afterCutScore;
+				int offset = cutScoreBuffer.centerDistanceCutScore;
+
+				switch (goodScoringElement.noteData.scoringType)
 				{
-					IReadonlyCutScoreBuffer cutScoreBuffer = goodScoringElement.cutScoreBuffer;
-
-					int preSwing = cutScoreBuffer.beforeCutScore;
-					int postSwing = cutScoreBuffer.afterCutScore;
-					int offset = cutScoreBuffer.centerDistanceCutScore;
-
-					noteSwingInfo.score = new Score(preSwing, postSwing, offset);
-
-					_noteInfos.Add(noteSwingInfo);
-					_noteSwingInfos.Remove(goodScoringElement.noteData);
+					case NoteData.ScoringType.Normal:
+						noteSwingInfo.score = new Score(preSwing, postSwing, offset);
+						_noteInfos.Add(noteSwingInfo);
+						break;
+					case NoteData.ScoringType.SliderHead:
+						if (!Plugin.Settings.CountArcs) break;
+						noteSwingInfo.score = new Score(preSwing, null, offset);
+						_noteInfos.Add(noteSwingInfo);
+						break;
+					case NoteData.ScoringType.SliderTail:
+						if (!Plugin.Settings.CountArcs) break;
+						noteSwingInfo.score = new Score(null, postSwing, offset);
+						_noteInfos.Add(noteSwingInfo);
+						break;
+					case NoteData.ScoringType.BurstSliderHead:
+						if (!Plugin.Settings.CountChains) break;
+						noteSwingInfo.score = new Score(preSwing, null, offset);
+						_noteInfos.Add(noteSwingInfo);
+						break;
 				}
+
+				_noteSwingInfos.Remove(goodScoringElement.noteData);
 			}
 			else {
 				// Bad cut, do nothing
