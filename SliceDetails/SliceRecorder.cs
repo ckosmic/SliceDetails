@@ -7,26 +7,30 @@ using SiraUtil.Logging;
 
 namespace SliceDetails
 {
-	internal class SliceRecorder : IInitializable, IDisposable, ISaberSwingRatingCounterDidFinishReceiver
+	internal class SliceRecorder : IInitializable, IDisposable
 	{
 		private readonly BeatmapObjectManager _beatmapObjectManager;
 		private readonly SliceProcessor _sliceProcessor;
+		private readonly ScoreController _scoreController;
 
-		private Dictionary<ISaberSwingRatingCounter, NoteInfo> _noteSwingInfos = new Dictionary<ISaberSwingRatingCounter, NoteInfo>();
+		private Dictionary<NoteData, NoteInfo> _noteSwingInfos = new Dictionary<NoteData, NoteInfo>();
 		private List<NoteInfo> _noteInfos = new List<NoteInfo>();
 
-		public SliceRecorder(BeatmapObjectManager beatmapObjectManager, SliceProcessor sliceProcessor) {
+		public SliceRecorder(BeatmapObjectManager beatmapObjectManager, ScoreController scoreController, SliceProcessor sliceProcessor) {
 			_beatmapObjectManager = beatmapObjectManager;
+			_scoreController = scoreController;
 			_sliceProcessor = sliceProcessor;
 		}
 
 		public void Initialize() {
 			_beatmapObjectManager.noteWasCutEvent += OnNoteWasCut;
+			_scoreController.scoringForNoteFinishedEvent += ScoringForNoteFinishedHandler;
 			_sliceProcessor.ResetProcessor();
 		}
 
 		public void Dispose() {
 			_beatmapObjectManager.noteWasCutEvent -= OnNoteWasCut;
+			_scoreController.scoringForNoteFinishedEvent -= ScoringForNoteFinishedHandler;
 			// Process slices once the map ends
 			ProcessSlices();
 		}
@@ -63,23 +67,45 @@ namespace SliceDetails
 
 			NoteInfo noteInfo = new NoteInfo(noteController.noteData, noteCutInfo, cutAngle, cutOffset, noteGridPosition, noteIndex);
 
-			_noteSwingInfos.Add(noteCutInfo.swingRatingCounter, noteInfo);
-
-			noteCutInfo.swingRatingCounter.UnregisterDidFinishReceiver(this);
-			noteCutInfo.swingRatingCounter.RegisterDidFinishReceiver(this);
+			_noteSwingInfos.Add(noteController.noteData, noteInfo);
 		}
 
-		public void HandleSaberSwingRatingCounterDidFinish(ISaberSwingRatingCounter saberSwingRatingCounter) {
+		public void ScoringForNoteFinishedHandler(ScoringElement scoringElement) {
 			NoteInfo noteSwingInfo;
-			if (_noteSwingInfos.TryGetValue(saberSwingRatingCounter, out noteSwingInfo))
+			if (_noteSwingInfos.TryGetValue(scoringElement.noteData, out noteSwingInfo))
 			{
-				int preSwing, postSwing, offset;
-				ScoreModel.RawScoreWithoutMultiplier(saberSwingRatingCounter, noteSwingInfo.cutInfo.cutDistanceToCenter, out preSwing, out postSwing, out offset);
+				GoodCutScoringElement goodScoringElement = (GoodCutScoringElement)scoringElement;
 
-				noteSwingInfo.score = new Score(preSwing, postSwing, offset);
+				IReadonlyCutScoreBuffer cutScoreBuffer = goodScoringElement.cutScoreBuffer;
 
-				_noteInfos.Add(noteSwingInfo);
-				_noteSwingInfos.Remove(saberSwingRatingCounter);
+				int preSwing = cutScoreBuffer.beforeCutScore;
+				int postSwing = cutScoreBuffer.afterCutScore;
+				int offset = cutScoreBuffer.centerDistanceCutScore;
+
+				switch (goodScoringElement.noteData.scoringType)
+				{
+					case NoteData.ScoringType.Normal:
+						noteSwingInfo.score = new Score(preSwing, postSwing, offset);
+						_noteInfos.Add(noteSwingInfo);
+						break;
+					case NoteData.ScoringType.SliderHead:
+						if (!Plugin.Settings.CountArcs) break;
+						noteSwingInfo.score = new Score(preSwing, null, offset);
+						_noteInfos.Add(noteSwingInfo);
+						break;
+					case NoteData.ScoringType.SliderTail:
+						if (!Plugin.Settings.CountArcs) break;
+						noteSwingInfo.score = new Score(null, postSwing, offset);
+						_noteInfos.Add(noteSwingInfo);
+						break;
+					case NoteData.ScoringType.BurstSliderHead:
+						if (!Plugin.Settings.CountChains) break;
+						noteSwingInfo.score = new Score(preSwing, null, offset);
+						_noteInfos.Add(noteSwingInfo);
+						break;
+				}
+
+				_noteSwingInfos.Remove(goodScoringElement.noteData);
 			}
 			else {
 				// Bad cut, do nothing

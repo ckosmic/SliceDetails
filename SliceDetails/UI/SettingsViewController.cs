@@ -30,5 +30,19 @@ namespace SliceDetails.UI
 			get { return Plugin.Settings.TrueCutOffsets; }
 			set { Plugin.Settings.TrueCutOffsets = value; }
 		}
+
+		[UIValue("count-arcs")]
+		public bool CountArcs
+		{
+			get { return Plugin.Settings.CountArcs; }
+			set { Plugin.Settings.CountArcs = value; }
+		}
+
+		[UIValue("count-chains")]
+		public bool CountChains
+		{
+			get { return Plugin.Settings.CountChains; }
+			set { Plugin.Settings.CountChains = value; }
+		}
 	}
 }

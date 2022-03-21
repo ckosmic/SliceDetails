@@ -4,5 +4,7 @@
 		<bool-setting text='Show In Completion Screen' value='show-completion' hover-hint='Shows SliceDetails in the level completion screen'></bool-setting>
 		<bool-setting text='Show Handles' value='show-handles' hover-hint='Shows draggable handles to move SliceDetails around'></bool-setting>
 		<bool-setting text='True Cut Offsets' value='true-offsets' hover-hint='If disabled, magnifies the distance from the arrow to the center of the block, giving you a better idea of how to improve your cuts'></bool-setting>
+		<bool-setting text='Include Arcs' value='count-arcs' hover-hint='Include arcs in the score calculation'></bool-setting>
+		<bool-setting text='Include Chains' value='count-chains' hover-hint='Include chains in the score calculation'></bool-setting>
 	</settings-container>
 </bg>
