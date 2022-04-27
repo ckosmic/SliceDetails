@@ -13,13 +13,16 @@ namespace SliceDetails.Data
 		public float[] angleAverages = new float[18];
 		public float[] offsetAverages = new float[18];
 		public Score[] scoreAverages = new Score[18];
+		public int[] noteCounts = new int[18];
 		public float scoreAverage = 0.0f;
 		public bool atLeastOneNote = false;
+		public int noteCount = 0;
 
 		public void CalculateAverages() {
 			angleAverages = new float[18];
 			offsetAverages = new float[18];
 			scoreAverages = new Score[18];
+			noteCounts = new int[18];
 			scoreAverage = 0.0f;
 			atLeastOneNote = false;
 
@@ -27,7 +30,7 @@ namespace SliceDetails.Data
 				scoreAverages[i] = new Score(0.0f, 0.0f, 0.0f);
 			}
 
-			int noteCount = 0;
+			noteCount = 0;
 			int preSwingCount = 0;
 			int postSwingCount = 0;
 			for (int i = 0; i < tileNoteInfos.Length; i++) {
@@ -39,6 +42,7 @@ namespace SliceDetails.Data
 						angleXYAverages.y += Mathf.Sin(noteInfo.cutAngle * Mathf.PI / 180f);
 						offsetAverages[i] += noteInfo.cutOffset;
 						scoreAverages[i] += noteInfo.score;
+						noteCounts[i]++;
 						scoreAverage += noteInfo.score.TotalScore;
 						preSwingCount += scoreAverages[i].CountPreSwing ? 1 : 0;
 						postSwingCount += scoreAverages[i].CountPostSwing ? 1 : 0;

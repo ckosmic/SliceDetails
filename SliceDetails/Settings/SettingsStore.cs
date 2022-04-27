@@ -22,5 +22,6 @@ namespace SliceDetails.Settings
 		public bool TrueCutOffsets = true;
 		public bool CountArcs = true;
 		public bool CountChains = true;
+		public bool ShowSliceCounts = true;
 	}
 }

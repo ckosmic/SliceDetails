@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
 using SliceDetails.Data;
+using UnityEngine.SceneManagement;
 
 namespace SliceDetails.UI
 {
@@ -37,6 +38,7 @@ namespace SliceDetails.UI
 		private AssetLoader _assetLoader;
 		private HoverHintControllerHandler _hoverHintControllerHandler;
 		private SliceProcessor _sliceProcessor;
+		private DiContainer _diContainer;
 
 		[UIObject("tile-grid")]
 		private readonly GameObject _tileGrid;
@@ -64,6 +66,8 @@ namespace SliceDetails.UI
 		private readonly ImageView _noteCutDistance;
 		[UIComponent("sd-version")]
 		private readonly TextMeshProUGUI _sdVersionText;
+		[UIComponent("reset-button")]
+		private readonly RectTransform _resetButtonTransform;
 
 		private List<ClickableImage> _tiles = new List<ClickableImage>();
 		private List<NoteUI> _notes = new List<NoteUI>();
@@ -72,11 +76,12 @@ namespace SliceDetails.UI
 
 
 		[Inject]
-		internal void Construct(SiraLog siraLog, AssetLoader assetLoader, HoverHintControllerHandler hoverHintControllerHandler, SliceProcessor sliceProcessor) {
+		internal void Construct(SiraLog siraLog, AssetLoader assetLoader, HoverHintControllerHandler hoverHintControllerHandler, SliceProcessor sliceProcessor, DiContainer diContainer) {
 			_siraLog = siraLog;
 			_assetLoader = assetLoader;
 			_hoverHintControllerHandler = hoverHintControllerHandler;
 			_sliceProcessor = sliceProcessor;
+			_diContainer = diContainer;
 			_siraLog.Debug("GridViewController Constructed");
 		}
 
@@ -90,6 +95,18 @@ namespace SliceDetails.UI
 			ReflectionUtil.InvokeMethod<object, TextMeshProUGUI>(_sdVersionText, "Awake"); // For some reason this is necessary
 			_sdVersionText.rectTransform.sizeDelta = new Vector2(40.0f, 10.0f);
 			_sdVersionText.transform.localPosition = new Vector3(0.0f, -17.0f, 0.0f);
+
+			if (SceneManager.GetActiveScene().name == "MainMenu") {
+				Destroy(_resetButtonTransform.gameObject);
+			} else { 
+				_resetButtonTransform.sizeDelta = new Vector2(8.0f, 4.0f);
+				_resetButtonTransform.localPosition = new Vector3(-15.0f, -17.0f, 0.0f);
+				_resetButtonTransform.GetComponentInChildren<CurvedTextMeshPro>().fontStyle = FontStyles.Normal;
+				foreach (ImageView iv in _resetButtonTransform.GetComponentsInChildren<ImageView>()) {
+					iv.SetField("_skew", 0.0f);
+					iv.transform.localPosition = Vector3.zero;
+				}
+			}
 
 			_tiles = new List<ClickableImage>();
 			// Create first row of tiles
@@ -149,11 +166,23 @@ namespace SliceDetails.UI
 
 		public void SetTileScores() {
 			for (int i = 0; i < _tiles.Count; i++) {
-				FormattableText text = _tiles[i].transform.GetComponentInChildren<FormattableText>();
-				if (_sliceProcessor.tiles[i].atLeastOneNote)
-					text.text = String.Format("{0:0.00}", _sliceProcessor.tiles[i].scoreAverage);
-				else
-					text.text = "";
+				FormattableText[] texts = _tiles[i].transform.GetComponentsInChildren<FormattableText>(true);
+
+				if(Plugin.Settings.ShowSliceCounts) {
+					texts[0].transform.localPosition = new Vector3(0.0f, 0.75f, 0.0f);
+					texts[1].transform.localPosition = new Vector3(0.0f, -1.5f, 0.0f);
+					texts[1].gameObject.SetActive(true);
+				} else {
+					texts[1].gameObject.SetActive(false);
+				}
+
+				if (_sliceProcessor.tiles[i].atLeastOneNote) { 
+					texts[0].text = String.Format("{0:0.00}", _sliceProcessor.tiles[i].scoreAverage);
+					texts[1].text = _sliceProcessor.tiles[i].noteCount.ToString();
+				} else { 
+					texts[0].text = "";
+					texts[1].text = "";
+				}
 			}
 		}
 
@@ -165,8 +194,9 @@ namespace SliceDetails.UI
 				float angle = tile.angleAverages[i];
 				float offset = tile.offsetAverages[i];
 				Score score = tile.scoreAverages[i];
+				int count = tile.noteCounts[i];
 
-				_notes[i].SetNoteData(angle, offset, score);
+				_notes[i].SetNoteData(angle, offset, score, count);
 			}
 		}
 
@@ -185,6 +215,13 @@ namespace SliceDetails.UI
 			for (int i = 0; i < _notes.Count; i++) {
 				_notes[i].SetHoverHintController(currentHoverHintController);
 			}
+		}
+
+		[UIAction("resetRecorder")]
+		public void ResetRecorder() {
+			SliceRecorder sliceRecorder = _diContainer.TryResolve<SliceRecorder>();
+			sliceRecorder?.ClearSlices();
+			SetTileScores();
 		}
 	}
 }

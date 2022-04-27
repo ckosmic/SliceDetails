@@ -7,11 +7,13 @@ using SiraUtil.Logging;
 
 namespace SliceDetails
 {
-	internal class SliceRecorder : IInitializable, IDisposable
+	internal class SliceRecorder : UnityEngine.Object, IInitializable, IDisposable
 	{
 		private readonly BeatmapObjectManager _beatmapObjectManager;
 		private readonly SliceProcessor _sliceProcessor;
 		private readonly ScoreController _scoreController;
+
+		[Inject] private SiraLog _siraLog;
 
 		private Dictionary<NoteData, NoteInfo> _noteSwingInfos = new Dictionary<NoteData, NoteInfo>();
 		private List<NoteInfo> _noteInfos = new List<NoteInfo>();
@@ -32,6 +34,12 @@ namespace SliceDetails
 			_beatmapObjectManager.noteWasCutEvent -= OnNoteWasCut;
 			_scoreController.scoringForNoteFinishedEvent -= ScoringForNoteFinishedHandler;
 			// Process slices once the map ends
+			ProcessSlices();
+		}
+
+		public void ClearSlices() {
+			_siraLog.Info("Slices cleared");
+			_noteInfos.Clear();
 			ProcessSlices();
 		}
 

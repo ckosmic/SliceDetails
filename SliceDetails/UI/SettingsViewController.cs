@@ -24,6 +24,13 @@ namespace SliceDetails.UI
 			set { Plugin.Settings.ShowHandle = value; }
 		}
 
+		[UIValue("show-counts")]
+		public bool ShowSliceCounts
+		{
+			get { return Plugin.Settings.ShowSliceCounts; }
+			set { Plugin.Settings.ShowSliceCounts = value; }
+		}
+
 		[UIValue("true-offsets")]
 		public bool TrueCutOffsets
 		{
