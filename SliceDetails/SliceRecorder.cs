@@ -38,7 +38,6 @@ namespace SliceDetails
 		}
 
 		public void ClearSlices() {
-			_siraLog.Info("Slices cleared");
 			_noteInfos.Clear();
 			ProcessSlices();
 		}

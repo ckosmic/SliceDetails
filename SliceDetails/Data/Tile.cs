@@ -31,10 +31,10 @@ namespace SliceDetails.Data
 			}
 
 			noteCount = 0;
-			int preSwingCount = 0;
-			int postSwingCount = 0;
 			for (int i = 0; i < tileNoteInfos.Length; i++) {
 				if (tileNoteInfos[i].Count > 0) {
+					int preSwingCount = 0;
+					int postSwingCount = 0;
 					Vector2 angleXYAverages = Vector2.zero;
 					foreach (NoteInfo noteInfo in tileNoteInfos[i]) {
 						atLeastOneNote = true;
@@ -52,7 +52,9 @@ namespace SliceDetails.Data
 					angleXYAverages.y /= tileNoteInfos[i].Count;
 					angleAverages[i] = Mathf.Atan2(angleXYAverages.y, angleXYAverages.x) * 180f / Mathf.PI;
 					offsetAverages[i] /= tileNoteInfos[i].Count;
-					scoreAverages[i] /= new Score(preSwingCount, postSwingCount, tileNoteInfos[i].Count);
+					scoreAverages[i].PreSwing /= preSwingCount;
+					scoreAverages[i].PostSwing /= postSwingCount;
+					scoreAverages[i].Offset /= tileNoteInfos[i].Count;
 				}
 			}
 			scoreAverage /= noteCount;
