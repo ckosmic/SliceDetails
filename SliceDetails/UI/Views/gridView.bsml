@@ -8,6 +8,7 @@
 			<clickable-image id='tile' src='SliceDetails.Resources.bloq_gradient.png' default-color='#777777' highlight-color='#eeeeee' preferred-width='10' preferred-height='10' click-event='presentNotesModal'>
 				<!--<image id='tile-dot' src='SliceDetails.Resources.dot.png' size-delta-x='10' size-delta-y='10'></image>-->
 				<text text='' font-size='3' face-color='#ffffff' font-align='Center'></text>
+				<text text='' font-size='2' face-color='#999999' font-align='Center'></text>
 			</clickable-image>
 		</horizontal>
 		<modal id='note-modal' show-event='presentNotesModal' click-off-closes='true' move-to-center='true'>
@@ -27,4 +28,14 @@
 		</modal>
 	</vertical>
 	<text id='sd-version' text='SliceDetails v' font-size='2' font-color='#999' font-align='Right' ignore-layout='true' preferred-width='5'/>
+	<button id='reset-button' font-size='2' click-event='askReset' text='Reset' ignore-layout='true' preferred-width='10'></button>
+	<modal id='reset-confirmation' show-event='askReset' hide-event='closeResetModal' click-off-closes='true' move-to-center='true'>
+		<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' preferred-height='15' preferred-width='30'>
+			<text font-size='3' text='Are you sure you want to reset all recorded slices?' word-wrapping='true' font-align='Top'></text>
+			<horizontal>
+				<button id='yes-reset-button' font-size='3' click-event='closeResetModal' on-click='resetRecorder' text='Yes' preferred-width='10'></button>
+				<button id='no-reset-button' font-size='3' click-event='closeResetModal' text='No' preferred-width='10'></button>
+			</horizontal>
+		</vertical>
+	</modal>
 </bg>
