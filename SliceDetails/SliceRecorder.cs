@@ -74,7 +74,10 @@ namespace SliceDetails
 
 			NoteInfo noteInfo = new NoteInfo(noteController.noteData, noteCutInfo, cutAngle, cutOffset, noteGridPosition, noteIndex);
 
-			_noteSwingInfos.Add(noteController.noteData, noteInfo);
+			if (!_noteSwingInfos.ContainsKey(noteController.noteData)) 
+			{
+				_noteSwingInfos.Add(noteController.noteData, noteInfo);
+			}
 		}
 
 		public void ScoringForNoteFinishedHandler(ScoringElement scoringElement) {
