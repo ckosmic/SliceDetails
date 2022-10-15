@@ -13,8 +13,10 @@ namespace SliceDetails.Data
 		public float[] angleAverages = new float[18];
 		public float[] offsetAverages = new float[18];
 		public Score[] scoreAverages = new Score[18];
+		public float[] timeDependenceAverages = new float[18];
 		public int[] noteCounts = new int[18];
 		public float scoreAverage = 0.0f;
+		public float timeDependenceAverage = 0.0f;
 		public bool atLeastOneNote = false;
 		public int noteCount = 0;
 
@@ -22,12 +24,15 @@ namespace SliceDetails.Data
 			angleAverages = new float[18];
 			offsetAverages = new float[18];
 			scoreAverages = new Score[18];
+			timeDependenceAverages = new float[18];
 			noteCounts = new int[18];
 			scoreAverage = 0.0f;
+			timeDependenceAverage = 0.0f;
 			atLeastOneNote = false;
 
 			for (int i = 0; i < 18; i++) {
 				scoreAverages[i] = new Score(0.0f, 0.0f, 0.0f);
+				timeDependenceAverages[i] = 0f;
 			}
 
 			noteCount = 0;
@@ -42,8 +47,10 @@ namespace SliceDetails.Data
 						angleXYAverages.y += Mathf.Sin(noteInfo.cutAngle * Mathf.PI / 180f);
 						offsetAverages[i] += noteInfo.cutOffset;
 						scoreAverages[i] += noteInfo.score;
+						timeDependenceAverages[i] += Math.Abs(noteInfo.cutInfo.cutNormal.z);
 						noteCounts[i]++;
 						scoreAverage += noteInfo.score.TotalScore;
+						timeDependenceAverage += Math.Abs(noteInfo.cutInfo.cutNormal.z);
 						preSwingCount += scoreAverages[i].CountPreSwing ? 1 : 0;
 						postSwingCount += scoreAverages[i].CountPostSwing ? 1 : 0;
 						noteCount++;
@@ -55,9 +62,11 @@ namespace SliceDetails.Data
 					scoreAverages[i].PreSwing /= preSwingCount;
 					scoreAverages[i].PostSwing /= postSwingCount;
 					scoreAverages[i].Offset /= tileNoteInfos[i].Count;
+					timeDependenceAverages[i] /= tileNoteInfos[i].Count;
 				}
 			}
 			scoreAverage /= noteCount;
+			timeDependenceAverage /= noteCount;
 		}
 	}
 }

@@ -13,6 +13,7 @@ using UnityEngine.EventSystems;
 using Zenject;
 using SliceDetails.Data;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 namespace SliceDetails.UI
 {
@@ -169,16 +170,17 @@ namespace SliceDetails.UI
 				FormattableText[] texts = _tiles[i].transform.GetComponentsInChildren<FormattableText>(true);
 
 				if(Plugin.Settings.ShowSliceCounts) {
-					texts[0].transform.localPosition = new Vector3(0.0f, 0.75f, 0.0f);
-					texts[1].transform.localPosition = new Vector3(0.0f, -1.5f, 0.0f);
+					texts[0].transform.localPosition = new Vector3(0.0f, 1f, 0.0f);
+					texts[1].transform.localPosition = new Vector3(0.0f, -3f, 0.0f);
 					texts[1].gameObject.SetActive(true);
 				} else {
 					texts[1].gameObject.SetActive(false);
 				}
 
 				if (_sliceProcessor.tiles[i].atLeastOneNote) { 
-					texts[0].text = String.Format("{0:0.00}", _sliceProcessor.tiles[i].scoreAverage);
-					texts[1].text = _sliceProcessor.tiles[i].noteCount.ToString();
+					texts[0].text = String.Format("{0:0.00}", _sliceProcessor.tiles[i].scoreAverage) + "<size=75%>\nTD - " + String.Format("{0:0.00}", _sliceProcessor.tiles[i].timeDependenceAverage) +"</size>";
+                    texts[0].lineSpacing = -30;
+                    texts[1].text = _sliceProcessor.tiles[i].noteCount.ToString();
 				} else { 
 					texts[0].text = "";
 					texts[1].text = "";
@@ -195,8 +197,9 @@ namespace SliceDetails.UI
 				float offset = tile.offsetAverages[i];
 				Score score = tile.scoreAverages[i];
 				int count = tile.noteCounts[i];
+				float timeDependence = tile.timeDependenceAverages[i];
 
-				_notes[i].SetNoteData(angle, offset, score, count);
+				_notes[i].SetNoteData(angle, offset, score, count, timeDependence);
 			}
 		}
 

@@ -106,7 +106,7 @@ namespace SliceDetails.UI
 			csf.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 		}
 
-		public void SetNoteData(float angle, float offset, Score score, int count) {
+		public void SetNoteData(float angle, float offset, Score score, int count ,float timeDependence) {
 			_noteHoverHint.SetField("_hoverHintController", _hoverHintController);
 
 			if (angle == 0f && offset == 0f) {
@@ -129,7 +129,7 @@ namespace SliceDetails.UI
 				}
 				_directionArrowImage.color = Color.white;
 				string noteNotes = count == 1 ? "note" : "notes";
-				_noteHoverHint.text = "Average score (" + count + " " + noteNotes + ")\n<color=#ff0000>" + String.Format("{0:0.00}", score.TotalScore) + "</color>\n<color=#666666><size=3><line-height=115%>Pre-swing - " + String.Format("{0:0.00}", score.PreSwing) + "\nPost-swing - " + String.Format("{0:0.00}", score.PostSwing) + "\nAccuracy - " + String.Format("{0:0.00}", score.Offset) + "</line-height></size></color>";
+				_noteHoverHint.text = "Average score (" + count + " " + noteNotes + ")\n<color=#ff0000>" + String.Format("{0:0.00}", score.TotalScore) + "</color> (TD - " +String.Format("{0:0.00}", timeDependence)+ ")\n<color=#666666><size=3><line-height=115%>Pre-swing - " + String.Format("{0:0.00}", score.PreSwing) + "\nPost-swing - " + String.Format("{0:0.00}", score.PostSwing) + "\nAccuracy - " + String.Format("{0:0.00}", score.Offset) + "</line-height></size></color>";
 			}
 		}
 	}
