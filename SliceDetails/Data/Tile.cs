@@ -12,7 +12,8 @@ namespace SliceDetails.Data
 		public List<NoteInfo>[] tileNoteInfos = new List<NoteInfo>[18];
 		public float[] angleAverages = new float[18];
 		public float[] offsetAverages = new float[18];
-		public Score[] scoreAverages = new Score[18];
+        public float[] offsetDeviation = new float[18];
+        public Score[] scoreAverages = new Score[18];
 		public int[] noteCounts = new int[18];
 		public float scoreAverage = 0.0f;
 		public bool atLeastOneNote = false;
@@ -21,6 +22,7 @@ namespace SliceDetails.Data
 		public void CalculateAverages() {
 			angleAverages = new float[18];
 			offsetAverages = new float[18];
+			offsetDeviation = new float[18];
 			scoreAverages = new Score[18];
 			noteCounts = new int[18];
 			scoreAverage = 0.0f;
@@ -41,6 +43,7 @@ namespace SliceDetails.Data
 						angleXYAverages.x += Mathf.Cos(noteInfo.cutAngle * Mathf.PI / 180f);
 						angleXYAverages.y += Mathf.Sin(noteInfo.cutAngle * Mathf.PI / 180f);
 						offsetAverages[i] += noteInfo.cutOffset;
+						offsetDeviation[i] += noteInfo.cutOffset * noteInfo.cutOffset;
 						scoreAverages[i] += noteInfo.score;
 						noteCounts[i]++;
 						scoreAverage += noteInfo.score.TotalScore;
@@ -51,6 +54,8 @@ namespace SliceDetails.Data
 					angleXYAverages.x /= tileNoteInfos[i].Count;
 					angleXYAverages.y /= tileNoteInfos[i].Count;
 					angleAverages[i] = Mathf.Atan2(angleXYAverages.y, angleXYAverages.x) * 180f / Mathf.PI;
+					offsetDeviation[i] = (offsetDeviation[i] - offsetAverages[i] * offsetAverages[i] / tileNoteInfos[i].Count) / tileNoteInfos[i].Count;
+					offsetDeviation[i] = Mathf.Sqrt(offsetDeviation[i]);
 					offsetAverages[i] /= tileNoteInfos[i].Count;
 					scoreAverages[i].PreSwing /= preSwingCount;
 					scoreAverages[i].PostSwing /= postSwingCount;

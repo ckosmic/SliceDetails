@@ -193,10 +193,11 @@ namespace SliceDetails.UI
 			for (int i = 0; i < _notes.Count; i++) {
 				float angle = tile.angleAverages[i];
 				float offset = tile.offsetAverages[i];
+				float offsetDeviation = tile.offsetDeviation[i];
 				Score score = tile.scoreAverages[i];
 				int count = tile.noteCounts[i];
 
-				_notes[i].SetNoteData(angle, offset, score, count);
+				_notes[i].SetNoteData(angle, offset, offsetDeviation, score, count);
 			}
 		}
 

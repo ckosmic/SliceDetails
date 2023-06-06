@@ -106,7 +106,7 @@ namespace SliceDetails.UI
 			csf.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 		}
 
-		public void SetNoteData(float angle, float offset, Score score, int count) {
+		public void SetNoteData(float angle, float offset, float offsetDeviation, Score score, int count) {
 			_noteHoverHint.SetField("_hoverHintController", _hoverHintController);
 
 			if (angle == 0f && offset == 0f) {
@@ -122,11 +122,13 @@ namespace SliceDetails.UI
 				_cutGroup.transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, angle - _noteRotation - 90f));
 				if (Plugin.Settings.TrueCutOffsets) {
 					_cutArrowImage.transform.localPosition = new Vector3(offset * 20.0f, 0f, 0f);
-					_cutDistanceImage.transform.localScale = new Vector2(-offset * 1.33f, 1.0f);
-				} else {
+                    _cutDistanceImage.transform.localPosition = new Vector3((offset + offsetDeviation / 2.0f) * 20.0f, 0f, 0f);
+                    _cutDistanceImage.transform.localScale = new Vector2(offsetDeviation * 1.25f, 1.0f);
+                } else {
 					_cutArrowImage.transform.localPosition = new Vector3(offset * (30.0f + score.Offset), 0f, 0f);
-					_cutDistanceImage.transform.localScale = new Vector2(-offset * (1.995f + score.Offset*0.0665f), 1.0f);
-				}
+                    _cutDistanceImage.transform.localPosition = new Vector3((offset + offsetDeviation / 2.0f) * (30.0f + score.Offset), 0f, 0f);
+                    _cutDistanceImage.transform.localScale = new Vector2(offsetDeviation * (1.875f + score.Offset * 0.0625f), 1.0f);
+                }
 				_directionArrowImage.color = Color.white;
 				string noteNotes = count == 1 ? "note" : "notes";
 				_noteHoverHint.text = "Average score (" + count + " " + noteNotes + ")\n<color=#ff0000>" + String.Format("{0:0.00}", score.TotalScore) + "</color>\n<color=#666666><size=3><line-height=115%>Pre-swing - " + String.Format("{0:0.00}", score.PreSwing) + "\nPost-swing - " + String.Format("{0:0.00}", score.PostSwing) + "\nAccuracy - " + String.Format("{0:0.00}", score.Offset) + "</line-height></size></color>";
