@@ -81,11 +81,8 @@ namespace SliceDetails
 		}
 
 		public void ScoringForNoteFinishedHandler(ScoringElement scoringElement) {
-			NoteInfo noteSwingInfo;
-			if (_noteSwingInfos.TryGetValue(scoringElement.noteData, out noteSwingInfo))
+			if (_noteSwingInfos.TryGetValue(scoringElement.noteData, out NoteInfo noteSwingInfo) && scoringElement is GoodCutScoringElement goodScoringElement)
 			{
-				GoodCutScoringElement goodScoringElement = (GoodCutScoringElement)scoringElement;
-
 				IReadonlyCutScoreBuffer cutScoreBuffer = goodScoringElement.cutScoreBuffer;
 
 				int preSwing = cutScoreBuffer.beforeCutScore;
